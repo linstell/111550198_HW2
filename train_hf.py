@@ -202,8 +202,9 @@ def evaluate(
                         labels=labels,
                     )
                     loss = outputs.loss
-            except Exception:
-                continue
+            except Exception as err:
+                print(f"\nValidation batch failed: {err}")
+                raise
 
             if torch.isnan(loss) or torch.isinf(loss):
                 continue
@@ -281,11 +282,11 @@ def main():
     # Faster but still strong config
     train_sizes = [512]
     eval_size = 512
-    train_subset_size = 5000      # set None for full training
+    train_subset_size = 10000      # set None for full training
     batch_size = 2
     grad_accum_steps = 1
-    num_epochs = 12
-    warmup_epochs = 1
+    num_epochs = 20
+    warmup_epochs = 3
     num_queries = 100
     eval_every = 2
 
@@ -295,7 +296,7 @@ def main():
     max_norm = 0.1
 
     val_conf = 0.03
-    val_max_boxes = 30
+    val_max_boxes = 100
 
     processor = DeformableDetrImageProcessor(
         format="coco_detection",
